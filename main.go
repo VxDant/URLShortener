@@ -10,6 +10,9 @@ var longToShort map[string]string
 
 func main() {
 
+	store := NewInMemoryStore()
+	service := NewURLService(store)
+
 	longToShort = make(map[string]string)
 	dataSet := "abcdABCD"
 
