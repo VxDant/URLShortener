@@ -1,51 +1,62 @@
 package main
 
 import (
+	"URLShortener/model"
+	"encoding/json"
 	"fmt"
-	"math/rand/v2"
+	"log"
+	"net/http"
 )
 
-var longurl string
-var longToShort map[string]string
-
 func main() {
+
+	mux := http.NewServeMux()
 
 	store := NewInMemoryStore()
 	service := NewURLService(store)
 
-	longToShort = make(map[string]string)
-	dataSet := "abcdABCD"
+	mux.HandleFunc("GET /", homePage)
+	mux.HandleFunc("GET /api/v1/shorturl/urls", service.getAllURL)
+	mux.HandleFunc("POST /api/v1/shorturl/url", service.addURL)
+	mux.HandleFunc("GET /{id}", service.navigatetoUrl)
+
+	fmt.Println("Server starting on port 8080...")
+
+	log.Fatal(http.ListenAndServe(":8080", mux))
 
 	fmt.Println("Welcome to the url shortener app")
 
-	for {
-		fmt.Println("Enter the URL: ")
-		fmt.Scanln(&longurl)
-		fmt.Println(shorten(dataSet))
-
-	}
-
 }
 
-func shorten(dataSet string) string {
-	s := make([]byte, 4)
-
-	for i := 0; i < 4; i++ {
-		s[i] = byte(rand.UintN(8))
-	}
-
-	return getShortenedURL(dataSet, s)
-
+func homePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the Simple REST API in Go!")
 }
 
-func getShortenedURL(dataSet string, s []byte) string {
-	//s = [0 1 2 3]
+func (s *URLService) getAllURL(writer http.ResponseWriter, request *http.Request) {
+	s.getAllURLs()
+}
 
-	result := ""
+func (s *URLService) addURL(writer http.ResponseWriter, request *http.Request) {
+	longUrl := model.LongURL{URL: request.FormValue("url")}
+	shortUrl := s.ProcessAndAddLongURLtoMap(longUrl)
 
-	for _, value := range s {
-		result += string(dataSet[value])
-	}
+	writer.WriteHeader(http.StatusCreated)
+	json.NewEncoder(writer).Encode(shortUrl)
+}
 
-	return result
+func (s *URLService) navigatetoUrl(writer http.ResponseWriter, request *http.Request) {
+	id := request.PathValue("id")
+
+	longUrl := s.store.GetLongURL(model.ShortURL{Url: id})
+
+	longUrl.URL = "https://" + longUrl.URL
+
+	fmt.Printf("short url id: %v, long url: %v\n", id, longUrl.URL)
+
+	http.Redirect(writer, request, longUrl.URL, http.StatusFound)
+
+	//writer.WriteHeader(http.StatusMovedPermanently)
+	//writer.Header().Add("Location", longUrl.URL)
+	//writer.Header().Add("Content-Type", "application/json")
+
 }

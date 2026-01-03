@@ -1,6 +1,9 @@
 package main
 
-import "URLShortener/model"
+import (
+	"URLShortener/model"
+	"fmt"
+)
 
 type InMemoryStore struct {
 	mapLongUrlToShortUrl map[model.LongURL]model.ShortURL
@@ -19,6 +22,8 @@ func NewInMemoryStore() *InMemoryStore {
 func (s *InMemoryStore) AddURL(longUrl model.LongURL, shortUrl model.ShortURL) {
 	s.mapLongUrlToShortUrl[longUrl] = shortUrl
 	s.mapShortUrlToLongUrl[shortUrl] = longUrl
+
+	fmt.Println(s.mapLongUrlToShortUrl)
 }
 
 /*GetShortURL returns a short url from the map */
@@ -34,4 +39,8 @@ func (s *InMemoryStore) GetLongURL(shortUrl model.ShortURL) model.LongURL {
 func (s *InMemoryStore) ifLongURLExist(longUrl model.LongURL) bool {
 	_, exists := s.mapLongUrlToShortUrl[longUrl]
 	return exists
+}
+
+func (s *InMemoryStore) getAllURL() map[model.LongURL]model.ShortURL {
+	return s.mapLongUrlToShortUrl
 }
