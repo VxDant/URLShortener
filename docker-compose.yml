@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: short.ly-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      url-db:
+        condition: service_healthy
+    networks:
+      - shortly-network
+
+  url-db:
+    image: postgres:13.1-alpine
+    container_name: url-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U compose-postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+      - POSTGRES_DB=urlshortener
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - shortly-network
+
+volumes:
+  dbdata:
+
+networks:
+  shortly-network:
+    driver: bridge

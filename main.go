@@ -33,7 +33,24 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *URLService) getAllURL(writer http.ResponseWriter, request *http.Request) {
-	s.getAllURLs()
+
+	fmt.Printf("{ {"+
+		"GET request, getAllURL} %v\n", s.getAllURLs())
+
+	jsonData, error := json.Marshal(s.getAllURLs())
+
+	if error != nil {
+		fmt.Println(error)
+		return
+	}
+
+	writer.WriteHeader(http.StatusOK)
+	err := json.NewEncoder(writer).Encode(jsonData)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func (s *URLService) addURL(writer http.ResponseWriter, request *http.Request) {
@@ -53,10 +70,9 @@ func (s *URLService) navigatetoUrl(writer http.ResponseWriter, request *http.Req
 
 	fmt.Printf("short url id: %v, long url: %v\n", id, longUrl.URL)
 
-	http.Redirect(writer, request, longUrl.URL, http.StatusFound)
+	//http.Redirect(writer, request, longUrl.URL, http.StatusFound)
 
-	//writer.WriteHeader(http.StatusMovedPermanently)
-	//writer.Header().Add("Location", longUrl.URL)
-	//writer.Header().Add("Content-Type", "application/json")
+	writer.Header().Set("Location", longUrl.URL)
+	writer.WriteHeader(http.StatusFound)
 
 }
