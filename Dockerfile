@@ -9,7 +9,7 @@ ENV CGO_ENABLED=0 \
 WORKDIR /build
 
 # Copy go.mod file for dependency installation
-COPY go.mod  ./
+COPY go.mod  ./ go.sum ./
 
 # Download dependencies
 RUN go mod download
