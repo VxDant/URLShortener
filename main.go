@@ -2,13 +2,24 @@ package main
 
 import (
 	"URLShortener/model"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	if err := runMigrations(ctx); err != nil {
+		log.Fatal("Migration error:", err)
+	}
+
+	log.Println("Database ready, starting server on port 8080...")
 
 	mux := http.NewServeMux()
 

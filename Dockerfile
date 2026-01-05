@@ -29,6 +29,7 @@ RUN addgroup -g 1001 app && \
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app /bin/app
+COPY --from=builder /build/db/migrations /db/migrations
 
 USER app
 
