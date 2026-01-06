@@ -72,7 +72,7 @@ func (r *URLRepository) GetByLongURL(longURL string) (*models.URL, error) {
 }
 
 // Create inserts a new shortened URL
-func (r *URLRepository) Create(shortCode, longURL string) (*models.URL, error) {
+func (r *URLRepository) Create(shortCode string, longURL string) (*models.URL, error) {
 	query := `
 		INSERT INTO urls (short_code, long_url) 
 		VALUES ($1, $2) 
