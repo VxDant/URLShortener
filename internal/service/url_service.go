@@ -54,13 +54,17 @@ func (service *URLService) GetAllURL() ([]*models.URL, error) {
 	return urls, nil
 }
 
-//func (service *URLService) GenerateShortURL(shortURLCode string) (string, error) {
-//
-//	shortURL := fmt.Sprintf("https://shortly%v.com",shortURLCode)
-//
-//	return shortURL, nil
-//
-//}
+func (service *URLService) GetByShortCode(shortURLCode string) (string, error) {
+
+	url, err := service.repository.GetByShortCode(shortURLCode)
+
+	if err != nil {
+		return "", err
+	}
+
+	return url.LongURL, nil
+
+}
 
 func (service *URLService) GenerateShortURLCode(longURL string) (string, error) {
 	s := make([]byte, 6)

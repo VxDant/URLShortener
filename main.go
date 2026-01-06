@@ -40,6 +40,7 @@ func main() {
 	mux.HandleFunc("GET /test-db", testDatabaseHandler(urlRepo))
 	mux.HandleFunc("GET /api/v1/shorturl/urls", urlHandler.GetAllURLs)
 	mux.HandleFunc("POST /api/v1/shorturl/url", urlHandler.CreateShortURL)
+	mux.HandleFunc("GET /shortly/{id}", urlHandler.RedirectToLongURL)
 
 	fmt.Println("Server starting on port 8080...")
 
