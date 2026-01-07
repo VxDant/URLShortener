@@ -13,7 +13,7 @@ import (
 var DB *sql.DB
 
 func Connect() error {
-	connStr := fmt.Sprintf("host=%s port=%v user=%s password=%s dbname=%s sslmode=disable",
+	connStr := fmt.Sprintf("host=%s port=%v user=%s password=%s dbname=%s sslmode=require",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_USER"),
