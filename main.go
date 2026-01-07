@@ -35,12 +35,12 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", homePage)
+	mux.HandleFunc("GET /shortly/{id}", urlHandler.RedirectToLongURL)
 	mux.HandleFunc("GET /health", health)
 	mux.HandleFunc("GET /test-db", testDatabaseHandler(urlRepo))
-	mux.HandleFunc("GET /api/v1/shorturl/urls", urlHandler.GetAllURLs)
-	mux.HandleFunc("POST /api/v1/shorturl/url", urlHandler.CreateShortURL)
-	mux.HandleFunc("GET /shortly/{id}", urlHandler.RedirectToLongURL)
+	mux.HandleFunc("GET /api/v1/shortly/urls", urlHandler.GetAllURLs)
+	mux.HandleFunc("POST /api/v1/shortly/url", urlHandler.CreateShortURL)
+	mux.HandleFunc("GET /", homePage)
 
 	fmt.Println("Server starting on port 8080...")
 
